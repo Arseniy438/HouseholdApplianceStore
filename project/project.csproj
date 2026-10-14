@@ -13,4 +13,17 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.11" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<None Update="Images\**\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<Target Name="CopyImages" AfterTargets="Build">
+		<ItemGroup>
+			<ImageFiles Include="$(ProjectDir)Images\**\*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(ImageFiles)" DestinationFolder="$(OutputDir)Images\" SkipUnchangedFiles="true" />
+	</Target>
+
 </Project>

@@ -1,7 +1,7 @@
 ﻿using project.Models;
 
 
-namespace project.Data;
+namespace project.Tools;
 
 public static class DbInitializer
 {

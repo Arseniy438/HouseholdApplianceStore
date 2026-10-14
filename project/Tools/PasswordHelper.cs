@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace project
+namespace project.Tools
 {
     public static class PasswordHelper
     {

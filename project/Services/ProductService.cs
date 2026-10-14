@@ -1,8 +1,5 @@
-﻿using project.Data;
-using project.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using project.Models;
+using project.Tools;
 
 namespace project.Services
 {
@@ -61,6 +58,7 @@ namespace project.Services
             var product = context.Products.Find(id);
             if (product == null)
                 return (false, "Товар не найден в базе данных");
+            Tools.ImageHelper.DeleteImage(product.ImagePath);
 
             context.Products.Remove(product);
             context.SaveChanges();

@@ -7,6 +7,7 @@
         <!-- Глобальные конвертеры -->
         <converters:BoolToVisibilityConverter x:Key="BoolToVisConverter"/>
         <converters:PriceConverter x:Key="PriceConverter"/>
+        <converters:ImagePathConverter x:Key="ImagePathConverter"/>
 
         <!-- Стили -->
         <Style x:Key="PrimaryButton" TargetType="Button">

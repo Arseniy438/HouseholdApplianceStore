@@ -1,71 +1,81 @@
-﻿using project.Services;
+﻿using System.Windows;
+using project.Services;
 using project.Views;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
 
-namespace project.ViewModels
+namespace project.ViewModels;
+
+public class LoginViewModel : BaseViewModel
 {
-    public class LoginViewModel : BaseViewModel
+    private readonly AuthService _authService = new();
+
+    private string _login = string.Empty;
+    public string Login
     {
-        private readonly AuthService _authService = new();
+        get => _login;
+        set => SetProperty(ref _login, value);
+    }
 
-        private string _login = string.Empty;
-        public string Login
+    private string _errorMessage = string.Empty;
+    public string ErrorMessage
+    {
+        get => _errorMessage;
+        set => SetProperty(ref _errorMessage, value);
+    }
+
+    private bool _hasError;
+    public bool HasError
+    {
+        get => _hasError;
+        set => SetProperty(ref _hasError, value);
+    }
+
+    public RelayCommand LoginCommand { get; }
+    public RelayCommand GuestLoginCommand { get; }
+    public RelayCommand ExitCommand { get; }
+
+    public Action<bool>? CloseAction { get; set; }
+
+    public LoginViewModel()
+    {
+        LoginCommand = new RelayCommand(_ => { });
+        GuestLoginCommand = new RelayCommand(ExecuteGuestLogin);
+        ExitCommand = new RelayCommand(() => Application.Current.Shutdown());
+    }
+
+    public void ExecuteLoginWithPassword(string password)
+    {
+        HasError = false;
+        ErrorMessage = string.Empty;
+
+        var result = _authService.Login(Login, password);
+
+        if (result.Success)
         {
-            get => _login;
-            set => SetProperty(ref _login, value);
+            OpenMainWindow();
         }
-
-        private string _errorMessage = string.Empty;
-        public string ErrorMessage
+        else
         {
-            get => _errorMessage;
-            set => SetProperty(ref _errorMessage, value);
+            ErrorMessage = result.ErrorMessage;
+            HasError = true;
         }
+    }
 
-        private bool _hasError;
-        public bool HasError
-        {
-            get => _hasError;
-            set => SetProperty(ref _hasError, value);
-        }
+    private void ExecuteGuestLogin()
+    {
+        _authService.LoginAsGuest();
+        OpenMainWindow();
+    }
 
-        public RelayCommand LoginCommand { get; }
-        public RelayCommand ExitCommand { get; }
+    private void OpenMainWindow()
+    {
+        Window window;
 
-        public Action<bool>? CloseAction { get; set; }
+        if (_authService.IsManager)
+            window = new MainWindow(_authService);
+        else
+            window = new ShopWindow(_authService);
 
-        public LoginViewModel()
-        {
-            LoginCommand = new RelayCommand(ExecuteLogin);
-            ExitCommand = new RelayCommand(() => Application.Current.Shutdown());
-        }
-
-        public void ExecuteLoginWithPassword(string password)
-        {
-            HasError = false;
-            ErrorMessage = string.Empty;
-
-            var result = _authService.Login(Login, password);
-
-            if (result.Success)
-            {
-                var mainWindow = new MainWindow(_authService);
-                mainWindow.Show();
-                CloseAction?.Invoke(true);
-            }
-            else
-            {
-                ErrorMessage = result.ErrorMessage;
-                HasError = true;
-            }
-        }
-
-        private void ExecuteLogin(object? parameter)
-        {
-            // Password is passed from code-behind
-        }
+        window.Show();
+        CloseAction?.Invoke(true);
     }
 }

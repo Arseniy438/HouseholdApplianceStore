@@ -2,7 +2,7 @@
 using project.Models;
 using System.IO;
 
-namespace project.Data;
+namespace project.Tools;
 
 public class AppDbContext : DbContext
 {
